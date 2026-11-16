@@ -1,0 +1,224 @@
+/* ==========================================================================
+   CUEFRAME — Interactive Demonstration Workbench Styles
+   ========================================================================== */
+
+.workbench-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(circle at 50% 0%, #15151a 0%, #09090b 65%);
+  color: #f4f4f6;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.workbench-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(9, 9, 11, 0.85);
+  backdrop-filter: blur(12px);
+}
+
+.workbench-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.workbench-brand-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: rgba(229, 169, 60, 0.16);
+  color: #e5a93c;
+  border: 1px solid rgba(229, 169, 60, 0.4);
+  letter-spacing: 0.05em;
+}
+
+.workbench-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+
+.workbench-subtitle {
+  font-weight: 400;
+  color: #a1a1aa;
+  font-size: 15px;
+}
+
+.workbench-tagline {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: #71717a;
+}
+
+.workbench-tagline code {
+  font-family: 'JetBrains Mono', monospace;
+  color: #e5a93c;
+}
+
+.workbench-act-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.workbench-pill {
+  padding: 6px 11px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: #d4d4d8;
+  cursor: pointer;
+  transition: all 140ms ease;
+}
+
+.workbench-pill:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.workbench-pill[data-active="true"] {
+  background: #e5a93c;
+  color: #09090b;
+  border-color: #e5a93c;
+}
+
+/* Judge's Control Deck */
+.workbench-deck {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  padding: 14px 24px;
+  background: rgba(18, 18, 22, 0.75);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.workbench-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.workbench-group-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  color: #a1a1aa;
+  letter-spacing: 0.06em;
+}
+
+.workbench-btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.workbench-deck-btn,
+.workbench-mini-btn,
+.workbench-swatch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: #e4e4e7;
+  cursor: pointer;
+  transition: all 140ms ease;
+}
+
+.workbench-mini-btn {
+  padding: 2px 7px;
+  font-size: 10px;
+}
+
+.workbench-deck-btn[data-active="true"],
+.workbench-mini-btn[data-active="true"],
+.workbench-swatch-btn[data-active="true"] {
+  background: rgba(229, 169, 60, 0.16);
+  border-color: #e5a93c;
+  color: #e5a93c;
+}
+
+.workbench-swatch-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+/* Main Stage */
+.workbench-stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow-x: hidden;
+}
+
+.workbench-player-frame {
+  position: relative;
+  transition: width 180ms cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75);
+  border-radius: 8px;
+}
+
+.workbench-player-frame[data-bright-exposure="true"] {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.25),
+    0 24px 60px rgba(255, 255, 255, 0.08);
+}
+
+/* Footer */
+.workbench-footer {
+  padding: 12px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: #070709;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 11px;
+  color: #a1a1aa;
+}
+
+.workbench-shortcuts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.workbench-shortcuts kbd {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: #18181b;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #e5a93c;
+}
+
+.workbench-honesty-note {
+  font-size: 11px;
+  color: #71717a;
+}
+
+.workbench-honesty-note code {
+  font-family: 'JetBrains Mono', monospace;
+  color: #d4d4d8;
+}

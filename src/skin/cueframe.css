@@ -1,0 +1,944 @@
+/* ==========================================================================
+   CUEFRAME — The Cinematic Review Console for Visual Storytellers
+   Design System & Video.js v10 Public CSS Token Architecture
+   ========================================================================== */
+
+.cueframe-skin {
+  /* Video.js v10 Public Customization Tokens */
+  --media-accent-color: #e5a93c;
+  --media-accent-text-color: #09090b;
+  --media-border-color: oklch(1 0 0 / 0.12);
+  --media-border-radius: 8px;
+  --media-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --media-object-fit: contain;
+  --media-object-position: center;
+  --media-scale-unit: 16px;
+
+  /* CUEFRAME Reference Monitor Tokens (D65 Neutral Graphite Surround) */
+  --cueframe-mono-font: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --cueframe-surface-canvas: #070708;
+  --cueframe-surface-plate: #0d0d12;
+  --cueframe-surface-plate-elevated: #131319;
+  --cueframe-surface-plate-solid: #101016;
+  --cueframe-surface-hover: #1f1f28;
+  --cueframe-surface-active: #2b2b38;
+  --cueframe-border-subtle: rgba(255, 255, 255, 0.16);
+  --cueframe-border-strong: rgba(255, 255, 255, 0.32);
+
+  /* Text Hierarchy (WCAG AAA 14:1+ on D65 plates) */
+  --cueframe-text-primary: #f4f4f6;
+  --cueframe-text-secondary: #c4c4cc;
+  --cueframe-text-muted: #9494a0;
+
+  /* Department Review Cue Category Tokens */
+  --cueframe-cue-picture: #38bdf8;
+  --cueframe-cue-edit: #e5a93c;
+  --cueframe-cue-sound: #4ade80;
+  --cueframe-cue-fix: #fb7185;
+
+  /* Concentric Radii & Optical Sizing */
+  --cueframe-outer-radius: var(--media-border-radius, 8px);
+  --cueframe-capsule-radius: 6px;
+  --cueframe-inner-radius: 4px;
+  --cueframe-touch-target: 44px;
+  --cueframe-control-height: calc(var(--media-scale-unit) * 2.25);
+  --cueframe-transition-fast: 140ms cubic-bezier(0.22, 1, 0.36, 1);
+  --cueframe-transition-smooth: 220ms cubic-bezier(0.22, 1, 0.36, 1);
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-width: 240px;
+  min-height: 200px;
+  background-color: var(--cueframe-surface-canvas);
+  color: var(--cueframe-text-primary);
+  font-family: var(--media-font-family);
+  border-radius: var(--cueframe-outer-radius);
+  border: 1px solid var(--media-border-color);
+  overflow: hidden;
+  container-type: inline-size;
+  container-name: cueframe;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+}
+
+.cueframe-skin *,
+.cueframe-skin *::before,
+.cueframe-skin *::after {
+  box-sizing: border-box;
+}
+
+/* Suppress browser-native ::cue rendering so captions never collide with bottom controls */
+.cueframe-skin video::cue {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  background: transparent !important;
+  color: transparent !important;
+}
+
+/* Fullscreen 1.75x Scale Unit per Video.js v10 Spec */
+.cueframe-skin[data-fullscreen],
+.cueframe-skin:fullscreen {
+  --media-border-radius: 0px;
+  width: 100vw;
+  height: 100vh;
+  border: none;
+}
+
+@media (min-width: 1920px) {
+  .cueframe-skin[data-fullscreen],
+  .cueframe-skin:fullscreen {
+    --media-scale-unit: 22px;
+  }
+}
+
+/* Media Viewport & Object Fit */
+.cueframe-viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #050506;
+}
+
+.cueframe-skin video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: var(--media-object-fit, contain);
+  object-position: var(--media-object-position, center);
+  background: transparent;
+}
+
+/* Tabular Numerals for Zero-Jitter Timecode */
+.cueframe-tabular {
+  font-family: var(--cueframe-mono-font);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1, "zero" 1;
+  letter-spacing: -0.02em;
+}
+
+/* Reference Monitor Solid Opaque Plates (Zero-Blur / 100% Daylight & Low-Key Contrast) */
+.cueframe-plate {
+  background: #0d0d12 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(0, 0, 0, 0.75),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+  border-radius: var(--cueframe-capsule-radius);
+}
+
+/* ==========================================================================
+   Cinema-Grade Custom Captions Overlay (Always Positioned Above Controls)
+   ========================================================================== */
+
+.cueframe-captions-overlay {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 106px;
+  z-index: 26;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transition:
+    bottom var(--cueframe-transition-smooth),
+    right var(--cueframe-transition-smooth);
+}
+
+/* When controls auto-hide in VIEW mode, captions settle cleanly toward the lower safe-title bound */
+.cueframe-skin[data-cueframe-mode="view"][data-idle="true"]:not(:focus-within) .cueframe-captions-overlay {
+  bottom: 24px;
+}
+
+/* In REVIEW mode, clear the taller expanded scene timeline and open side drawer */
+.cueframe-skin[data-cueframe-mode="review"] .cueframe-captions-overlay {
+  bottom: 134px;
+}
+
+.cueframe-skin[data-cueframe-mode="review"][data-drawer-open="true"] .cueframe-captions-overlay {
+  right: 312px;
+}
+
+.cueframe-caption-cue-box {
+  display: inline-block;
+  max-width: min(86%, 680px);
+  padding: 6px 14px;
+  background: #08080c !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  color: #ffffff !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.35) !important;
+  border-radius: 6px;
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.95),
+    0 0 0 1px #000000 !important;
+  font-size: clamp(12px, 2cqi, 16px);
+  font-weight: 600;
+  line-height: 1.42;
+  text-align: center;
+  text-shadow: 0 1px 3px #000000 !important;
+  letter-spacing: 0.01em;
+  white-space: pre-line;
+}
+
+/* Top Instrumentation Bar (Contextual in REVIEW and INSPECT modes) */
+.cueframe-top-bar {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  z-index: 25;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+  pointer-events: none;
+  transition: opacity var(--cueframe-transition-smooth), transform var(--cueframe-transition-smooth);
+}
+
+.cueframe-top-bar > * {
+  pointer-events: auto;
+}
+
+.cueframe-top-left-cluster {
+  min-width: 0;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cueframe-slate-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 10px;
+  font-size: 11px;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.cueframe-slate-title {
+  color: var(--cueframe-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cueframe-top-right-cluster {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Scrollable Inspect Telemetry Panel so it never overflows vertically on compact players */
+.cueframe-inspect-panel {
+  padding: 10px 12px;
+  font-size: 11px;
+  line-height: 1.45;
+  width: min(100%, 420px);
+  max-height: calc(100cqi * 0.48);
+  min-height: 110px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cueframe-skin[data-cueframe-mode="view"][data-idle="true"]:not(:focus-within) .cueframe-top-bar {
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+}
+
+/* Bottom Control Console */
+.cueframe-bottom-console {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: opacity var(--cueframe-transition-smooth), transform var(--cueframe-transition-smooth);
+}
+
+/* Auto-hide in VIEW mode when idle and no focus/open popovers */
+.cueframe-skin[data-cueframe-mode="view"][data-idle="true"]:not(:focus-within) .cueframe-bottom-console {
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+}
+
+/* Timeline Deck */
+.cueframe-timeline-deck {
+  position: relative;
+  padding: 6px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: padding var(--cueframe-transition-smooth);
+}
+
+.cueframe-skin[data-cueframe-mode="review"] .cueframe-timeline-deck {
+  padding: 10px 12px 8px;
+}
+
+/* Video.js v10 TimeSlider & Custom Scene Track */
+.cueframe-slider-container {
+  position: relative;
+  width: 100%;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.cueframe-skin[data-cueframe-mode="review"] .cueframe-slider-container {
+  height: 30px;
+}
+
+.cueframe-slider-track-wrapper {
+  position: relative;
+  width: 100%;
+  height: 6px;
+  background: #181822;
+  border: 1px solid #272736;
+  border-radius: 3px;
+  overflow: visible;
+  transition: height var(--cueframe-transition-fast);
+}
+
+.cueframe-slider-container:hover .cueframe-slider-track-wrapper,
+.cueframe-slider-container:focus-within .cueframe-slider-track-wrapper {
+  height: 9px;
+}
+
+.cueframe-skin[data-cueframe-mode="review"] .cueframe-slider-track-wrapper {
+  height: 16px;
+  background: #111117;
+  border: 1px solid #2d2d3e;
+}
+
+/* Vernier Fine-Scrub Ruler Ticks in REVIEW / Drag State */
+.cueframe-vernier-ruler {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.22) 0px,
+    rgba(255, 255, 255, 0.22) 1px,
+    transparent 1px,
+    transparent 2%
+  );
+  opacity: 0;
+  transition: opacity var(--cueframe-transition-fast);
+}
+
+.cueframe-skin[data-cueframe-mode="review"] .cueframe-vernier-ruler,
+.cueframe-slider-container:hover .cueframe-vernier-ruler {
+  opacity: 0.65;
+}
+
+/* Buffer & Fill Bars */
+.cueframe-slider-buffer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  background: #272736;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.cueframe-slider-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  background: var(--media-accent-color);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.cueframe-skin[data-cueframe-mode="review"] .cueframe-slider-fill {
+  background: color-mix(in oklch, var(--media-accent-color) 45%, #181820);
+  border-right: 2px solid var(--media-accent-color);
+}
+
+/* Chapter Scene Segments */
+.cueframe-chapter-segments {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  pointer-events: none;
+}
+
+.cueframe-chapter-segment {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-right: 2px solid #09090b;
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  overflow: hidden;
+}
+
+.cueframe-chapter-segment-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  transition: opacity var(--cueframe-transition-fast);
+}
+
+.cueframe-skin[data-cueframe-mode="review"] .cueframe-chapter-segment-label {
+  opacity: 1;
+}
+
+/* A-B Loop Range Highlight */
+.cueframe-ab-loop-region {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  background: rgba(56, 189, 248, 0.22);
+  border-left: 2px solid #38bdf8;
+  border-right: 2px solid #38bdf8;
+  pointer-events: none;
+  z-index: 4;
+}
+
+/* Playhead Needle */
+.cueframe-playhead-thumb {
+  position: absolute;
+  top: 50%;
+  width: 12px;
+  height: 18px;
+  transform: translate(-50%, -50%);
+  background: var(--media-accent-color);
+  border: 2px solid #09090b;
+  border-radius: 3px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+  z-index: 6;
+  cursor: grab;
+}
+
+.cueframe-playhead-thumb:active {
+  cursor: grabbing;
+  transform: translate(-50%, -50%) scale(1.12);
+}
+
+/* Review Cue Marker Pins on Timeline */
+.cueframe-cue-pin {
+  position: absolute;
+  top: -7px;
+  width: 12px;
+  height: 12px;
+  transform: translateX(-50%) rotate(45deg);
+  border: 1.5px solid #09090b;
+  border-radius: 2px;
+  cursor: pointer;
+  z-index: 8;
+  padding: 0;
+  transition: transform var(--cueframe-transition-fast), box-shadow var(--cueframe-transition-fast);
+}
+
+.cueframe-cue-pin:hover,
+.cueframe-cue-pin:focus-visible {
+  transform: translateX(-50%) rotate(45deg) scale(1.3);
+  z-index: 12;
+}
+
+.cueframe-cue-pin[data-category="Picture"] {
+  background-color: var(--cueframe-cue-picture);
+}
+.cueframe-cue-pin[data-category="Edit"] {
+  background-color: var(--cueframe-cue-edit);
+}
+.cueframe-cue-pin[data-category="Sound"] {
+  background-color: var(--cueframe-cue-sound);
+}
+.cueframe-cue-pin[data-category="Fix"] {
+  background-color: var(--cueframe-cue-fix);
+}
+
+/* Scrub Hover Preview Card (Storyboard Thumbnail + Chapter + Timecode) */
+.cueframe-scrub-preview {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  transform: translateX(-50%);
+  z-index: 35;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px;
+  min-width: 132px;
+  max-width: 180px;
+}
+
+.cueframe-scrub-thumb-frame {
+  width: 144px;
+  height: 81px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #18181b;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Main Control Bar Row — Adaptive Multi-Row Wrapping so Controls Never Clip */
+.cueframe-control-bar {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 6px;
+  padding: 4px 8px;
+  min-height: 42px;
+}
+
+.cueframe-control-cluster {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+/* Floating Volume Capsule Popover */
+.cueframe-volume-popover-sheet {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  z-index: 52;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 195px;
+  background: #111118 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-radius: 6px;
+  border: 1px solid #333344 !important;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.92) !important;
+}
+
+/* Settings & Quick-Tools Popover Sheet (Accessible on Both Desktop & Small Screens) */
+.cueframe-settings-sheet {
+  position: absolute;
+  right: 8px;
+  bottom: calc(100% + 8px);
+  width: min(280px, calc(100cqi - 16px));
+  max-height: min(340px, 68vh);
+  overflow-y: auto;
+  padding: 10px;
+  z-index: 48;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #111118 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid #333344 !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.92) !important;
+}
+
+.cueframe-sheet-section {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-top: 6px;
+  border-top: 1px solid #232330;
+}
+
+.cueframe-sheet-section:first-child {
+  padding-top: 0;
+  border-top: none;
+}
+
+.cueframe-sheet-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #c4c4cc;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Buttons & Touch Targets */
+.cueframe-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 7px;
+  background: transparent;
+  color: var(--cueframe-text-primary);
+  border: 1px solid transparent;
+  border-radius: var(--cueframe-inner-radius);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  touch-action: manipulation;
+  flex-shrink: 0;
+  transition: background-color var(--cueframe-transition-fast), color var(--cueframe-transition-fast), border-color var(--cueframe-transition-fast);
+}
+
+/* Ensure 44x44px hit target on coarse pointers (touch screens) */
+@media (pointer: coarse) {
+  .cueframe-btn {
+    min-width: 40px;
+    min-height: 40px;
+  }
+}
+
+.cueframe-btn:hover:not(:disabled) {
+  background: #1f1f28;
+  border-color: #383848;
+}
+
+.cueframe-btn:active:not(:disabled) {
+  background: #2b2b38;
+}
+
+.cueframe-btn[data-active="true"] {
+  background: color-mix(in oklch, var(--media-accent-color) 20%, transparent);
+  color: var(--media-accent-color);
+  border-color: color-mix(in oklch, var(--media-accent-color) 45%, transparent);
+}
+
+.cueframe-btn-primary {
+  background: var(--media-accent-color);
+  color: var(--media-accent-text-color);
+  font-weight: 600;
+}
+
+.cueframe-btn-primary:hover:not(:disabled) {
+  background: color-mix(in oklch, var(--media-accent-color) 88%, white);
+}
+
+/* High-Visibility Focus Ring (WCAG 2.2 AA/AAA over bright and dark frames) */
+.cueframe-btn:focus-visible,
+.cueframe-cue-pin:focus-visible,
+.cueframe-mode-btn:focus-visible,
+.cueframe-input:focus-visible,
+.cueframe-slider-container:focus-visible {
+  outline: 2px solid var(--media-accent-color);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.85);
+}
+
+/* Tri-Mode Segmented Switcher (VIEW | REVIEW | INSPECT) */
+.cueframe-mode-switcher {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #09090c !important;
+  border: 1px solid #272733 !important;
+  border-radius: 5px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.cueframe-mode-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 26px;
+  padding: 0 8px;
+  border: none;
+  border-radius: 3px;
+  background: transparent;
+  color: #d4d4dc;
+  font-family: var(--cueframe-mono-font);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background-color var(--cueframe-transition-fast), color var(--cueframe-transition-fast);
+}
+
+.cueframe-mode-btn:hover {
+  color: #ffffff;
+  background: #1c1c25;
+}
+
+.cueframe-mode-btn[aria-pressed="true"] {
+  background: var(--media-accent-color);
+  color: var(--media-accent-text-color);
+}
+
+/* ==========================================================================
+   Review Slate Side Drawer — Clean Dark Carbon Slate (ZERO BLUR LAYER)
+   ========================================================================== */
+.cueframe-review-drawer {
+  position: absolute;
+  top: 52px;
+  right: 10px;
+  bottom: 132px;
+  width: 290px;
+  max-width: calc(100% - 20px);
+  z-index: 28;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--cueframe-capsule-radius);
+  border: 1px solid var(--cueframe-border-strong);
+  background: #0e0e12 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.75);
+  transition: all var(--cueframe-transition-fast);
+}
+
+/* Ghost Mode: 38% translucent so director can watch video right through notes */
+.cueframe-review-drawer[data-ghost="true"] {
+  background: rgba(14, 14, 18, 0.38) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-color: rgba(229, 169, 60, 0.45) !important;
+}
+
+/* Minimized Mode: Collapses to a compact 34px peek strip so video is 100% visible */
+.cueframe-review-drawer[data-minimized="true"] {
+  top: auto !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* ==========================================================================
+   Container Queries for Responsive Breakpoints (Zero Overflow Down to 240px)
+   ========================================================================== */
+
+/* Tablet & Compact Players (<= 767px) */
+@container cueframe (max-width: 767px) {
+  .cueframe-hide-tablet {
+    display: none !important;
+  }
+
+  /* On tablets/compact screens, position as a non-obscuring bottom sheet */
+  .cueframe-review-drawer {
+    top: auto !important;
+    left: 8px !important;
+    right: 8px !important;
+    bottom: 128px !important;
+    width: auto !important;
+    max-height: 150px;
+    background: #0e0e12 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    z-index: 34;
+  }
+
+  .cueframe-review-drawer[data-minimized="true"] {
+    max-height: 34px !important;
+    bottom: 128px !important;
+  }
+
+  .cueframe-skin[data-cueframe-mode="review"][data-drawer-open="true"] .cueframe-captions-overlay {
+    right: 16px;
+  }
+}
+
+/* Small & Mobile Screens (<= 560px): Two-Row Control Bar so Every Button Fits */
+@container cueframe (max-width: 560px) {
+  .cueframe-hide-compact {
+    display: none !important;
+  }
+
+  /* Move Mode Switcher onto a full-width top row inside the control bar */
+  .cueframe-mode-switcher {
+    order: -1;
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .cueframe-mode-btn {
+    flex: 1;
+    height: 24px;
+    font-size: 10px;
+  }
+
+  .cueframe-captions-overlay {
+    bottom: 132px;
+  }
+
+  .cueframe-skin[data-cueframe-mode="review"] .cueframe-captions-overlay {
+    bottom: 158px;
+  }
+
+  .cueframe-review-drawer {
+    top: auto !important;
+    left: 6px !important;
+    right: 6px !important;
+    bottom: 148px !important;
+    max-height: 130px;
+    background: #0e0e12 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .cueframe-review-drawer[data-minimized="true"] {
+    bottom: 148px !important;
+    max-height: 34px !important;
+  }
+}
+
+/* Ultra-Narrow Embeds (240px – 419px): Ultra-Compact Controls + Full Quick-Tools Sheet */
+@container cueframe (max-width: 419px) {
+  .cueframe-hide-narrow {
+    display: none !important;
+  }
+
+  .cueframe-top-bar {
+    top: 6px;
+    left: 6px;
+    right: 6px;
+  }
+
+  .cueframe-bottom-console {
+    left: 6px;
+    right: 6px;
+    bottom: 6px;
+    gap: 4px;
+  }
+
+  .cueframe-timeline-deck {
+    padding: 5px 8px;
+  }
+
+  .cueframe-skin[data-cueframe-mode="review"] .cueframe-timeline-deck {
+    padding: 6px 8px;
+  }
+
+  .cueframe-control-bar {
+    padding: 4px 5px;
+    gap: 4px 2px;
+  }
+
+  .cueframe-btn {
+    min-width: 28px;
+    height: 28px;
+    padding: 0 5px;
+    font-size: 11px;
+  }
+
+  .cueframe-volume-popover-sheet {
+    left: 4px;
+    right: 4px;
+    min-width: auto;
+  }
+
+  .cueframe-settings-sheet {
+    left: 6px;
+    right: 6px;
+    width: auto;
+    bottom: calc(100% + 6px);
+  }
+
+  .cueframe-captions-overlay {
+    left: 8px;
+    right: 8px;
+    bottom: 120px;
+  }
+
+  .cueframe-skin[data-cueframe-mode="review"] .cueframe-captions-overlay {
+    bottom: 142px;
+  }
+
+  .cueframe-caption-cue-box {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+
+  .cueframe-review-drawer {
+    top: auto !important;
+    left: 6px !important;
+    right: 6px !important;
+    bottom: 136px !important;
+    max-height: 115px;
+    background: #0e0e12 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .cueframe-review-drawer[data-minimized="true"] {
+    bottom: 136px !important;
+    max-height: 34px !important;
+  }
+}
+
+/* Accessibility Media Queries: Reduced Motion, Reduced Transparency, High Contrast, Forced Colors */
+@media (prefers-reduced-motion: reduce) {
+  .cueframe-skin *,
+  .cueframe-skin *::before,
+  .cueframe-skin *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .cueframe-plate,
+  .cueframe-caption-cue-box,
+  .cueframe-settings-sheet,
+  .cueframe-volume-popover-sheet {
+    background: var(--cueframe-surface-plate-solid) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border-color: rgba(255, 255, 255, 0.45) !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .cueframe-plate,
+  .cueframe-caption-cue-box,
+  .cueframe-settings-sheet,
+  .cueframe-volume-popover-sheet {
+    background: Canvas !important;
+    color: CanvasText !important;
+    border: 1px solid CanvasText !important;
+  }
+  .cueframe-slider-fill,
+  .cueframe-playhead-thumb,
+  .cueframe-mode-btn[aria-pressed="true"] {
+    background: Highlight !important;
+    color: HighlightText !important;
+  }
+}

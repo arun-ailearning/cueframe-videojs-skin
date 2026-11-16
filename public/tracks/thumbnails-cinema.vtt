@@ -1,0 +1,16 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:12.000
+data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="160" height="90" viewBox="0 0 160 90"><rect width="160" height="90" fill="%23090d16"/><circle cx="120" cy="30" r="18" fill="%23e5a93c" opacity="0.35"/><text x="10" y="76" fill="%23f4f4f6" font-family="monospace" font-size="10">SC 01 · NOCTURNE</text></svg>
+
+00:00:12.000 --> 00:00:26.000
+data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="160" height="90" viewBox="0 0 160 90"><rect width="160" height="90" fill="%23111827"/><rect x="20" y="15" width="120" height="45" stroke="%2338bdf8" fill="none"/><text x="10" y="76" fill="%23f4f4f6" font-family="monospace" font-size="10">SC 02 · CORRIDOR</text></svg>
+
+00:00:26.000 --> 00:00:42.000
+data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="160" height="90" viewBox="0 0 160 90"><rect width="160" height="90" fill="%23f1f5f9"/><circle cx="80" cy="36" r="22" fill="%23e5a93c"/><text x="10" y="76" fill="%230f172a" font-family="monospace" font-size="10">SC 03 · HIGH-KEY</text></svg>
+
+00:00:42.000 --> 00:00:58.000
+data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="160" height="90" viewBox="0 0 160 90"><rect width="160" height="90" fill="%231e1b4b"/><path d="M10 45 Q80 10 150 45" stroke="%234ade80" fill="none" stroke-width="2"/><text x="10" y="76" fill="%23f4f4f6" font-family="monospace" font-size="10">SC 04 · SOUND STAGE</text></svg>
+
+00:00:58.000 --> 00:01:15.000
+data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="160" height="90" viewBox="0 0 160 90"><rect width="160" height="90" fill="%2309090b"/><line x1="0" y1="20" x2="160" y2="20" stroke="%23e5a93c"/><line x1="0" y1="70" x2="160" y2="70" stroke="%23e5a93c"/><text x="10" y="50" fill="%23e5a93c" font-family="monospace" font-size="10">SC 05 · TAIL SLATE</text></svg>
